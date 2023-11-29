@@ -29,3 +29,129 @@ class User {
         this.age = age;
     }
 }
+
+
+
+
+import java.util.*;
+import java.util.stream.Collectors;
+// Не перпутать минимальное и максимально !!!!!!!!!//
+public class Main {
+    public static void main(String[] args) {
+        List<User> users = new ArrayList<>();
+        users.add(new User(1, "Vlad", 19));
+        users.add(new User(2, "Alice", 60));
+        users.add(new User(3, "Miroslav", 49));
+        users.add(new User(4, "Nikoly", 20));
+        users.add(new User(5, "Mark", 0));
+        users.add(new User(6, "Olga", 34));
+        users.add(new User(7, "Tim", 56));
+        users.add(new User(8, "Herman", 13));
+        users.add(new User(9, "Max", 28));
+        users.add(new User(10, "Bredy", 21));
+
+
+
+
+        getAllUsers(users);
+        getUserById(users, 3);
+        addUser(users, new User(11, "Sam", 45));
+        editUserById(users, 4, "Nikoly", 20);
+        deleteUserById(users, 5);
+        getNamesAndAges(users);
+        filterNamesByLength(users, 4);
+        getProductOfAges(users);
+        getMinAge(users);
+        getMaxAge(users);
+
+    }
+
+    public static void getAllUsers(List<User> users) {
+        for (User user : users) {
+            System.out.println(user.getId() + ": " + user.getName() + ", " + user.getAge());
+        }
+    }
+
+    public static void getUserById(List<User> users, int id) {
+        Optional<User> user = users.stream()
+                .filter(u -> u.getId() == id)
+                .findFirst();
+        System.out.println(user.orElse(null));
+    }
+
+    public static void addUser(List<User> users, User newUser) {
+        users.add(newUser);
+        System.out.println("Добавление: " + newUser.getName());
+    }
+
+    public static void editUserById(List<User> users, int id, String newName, int newAge) {
+        Optional<User> user = users.stream()
+                .filter(u -> u.getId() == id)
+                .findFirst();
+        user.ifPresent(u -> {
+            u.setName(newName);
+            u.setAge(newAge);
+        });
+        System.out.println("Упорядочеванеи пользователей : " + newName);
+    }
+
+    public static void deleteUserById(List<User> users, int id) {
+        Optional<User> user = users.stream()
+                .filter(u -> u.getId() == id)
+                .findFirst();
+        user.ifPresent(u -> {
+            users.remove(u);
+            System.out.println("Удаление " + u.getName());
+        });
+    }
+
+    public static void getNamesAndAges(List<User> users) {
+        List<String> namesAndAges = users.stream()
+                .map(u -> u.getName() + ", " + u.getAge())
+                .collect(Collectors.toList());
+        for (String str : namesAndAges) {
+            System.out.println(str);
+        }
+    }
+
+    public static void filterNamesByLength(List<User> users, int length) {
+        List<String> filteredNames = users.stream()
+                .map(User::getName)
+                .filter(name -> name.length() <= length)
+                .collect(Collectors.toList());
+        for (String name : filteredNames) {
+            System.out.println(name);
+        }
+    }
+
+
+
+
+
+
+    //Множинье //
+    public static void getProductOfAges(List<User> users) {
+        int productOfAges = users.stream()
+                .filter(u -> u.getAge() > 20)
+                .mapToInt(User::getAge)
+                .reduce((a, b) -> a * b)
+                .orElse(0);
+        System.out.println( productOfAges);
+    }
+
+    //Минимально//
+    public static void getMinAge(List<User> users) {
+        OptionalInt minAge = users.stream()
+                .mapToInt(User::getAge)
+                .min();
+        System.out.println("Минимальный ворзраст : " + minAge.orElse(0));
+    }
+
+    //Максимально?//
+    public static void getMaxAge(List<User> users) {
+        OptionalInt maxAge = users.stream()
+                .mapToInt(User::getAge)
+                .max();
+        System.out.println("Максимальный возраст: " + maxAge.orElse(0));
+    }
+}
